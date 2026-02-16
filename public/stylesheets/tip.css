@@ -1,0 +1,20 @@
+div.tip{
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 4px;
+    background-color: #ff2211;
+    color: #ffffff;
+    width: 400px;
+}
+.close{
+    float: right;
+    background: url(/close.png) no-repeat;
+    border: none;
+    padding: 0;
+    border-radius: 0;
+    outline: 0;
+    background-size: 100% 100%;
+    text-indent: -1000000px;
+    width: 16px;
+    height: 16px;
+}

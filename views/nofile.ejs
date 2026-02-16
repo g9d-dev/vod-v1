@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found</title>
+</head>
+<body>
+    <h1>文件已被删除</h1>
+    <hr/>
+    <p>文件已过期或被删除。请私信对方重新发送。</p>
+    <p id="return">3s后将返回</p>
+    <script>setTimeout(function(){
+        window.close();
+        setTimeout(function(){
+            document.getElementById("return").remove();
+        }, 1000);
+    }, 3000);</script>
+</body>
+</html>

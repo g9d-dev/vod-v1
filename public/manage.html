@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理岗位</title>
+    <style>
+        h2{
+            margin: 0 auto;
+            text-align: center;
+            padding: 0;
+            font-size: 5vw;
+            font-weight: normal;
+            font-style: normal;
+            margin-bottom: 30px;
+            margin-top: 60px;
+        }
+        ul, li{
+            list-style: none;
+        }
+        ul{
+            width: 38vw;
+            margin: 0 auto;
+        }
+        li{
+            height: auto;
+            padding: 8px;
+            border-radius: 6px;
+            background-color: #ff8800;
+            cursor: pointer;
+            color: #ffffff;
+        }
+        li>div{
+            float: right;
+        }
+        li>div>button{
+            display: inline-block;
+            padding: 3px;
+            border-radius: 2px;
+            background-color: #ffcc00;
+            border: 0;
+            outline: none;
+            color: #00ccff;
+            margin-left: 6px;
+            cursor: pointer;
+            margin-top: 3px;
+        }
+        li>div>button:hover{
+            color: #888888;
+            background-color: #ffff33;
+        }
+        li::after{
+            content: "";
+            display: block;
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+    <h2>岗位编辑</h2>
+    <ul id="gangweis"></ul>
+    <script src="./javascripts/jquery.js"></script>
+    <script>
+        $.getJSON("/gangwei/", function(json){
+            var ar = Array.from(json);
+            console.log(ar);
+            var ul = $("#gangweis");
+            ar.forEach(function(item){
+                var li = $(document.createElement("li"));
+                li.text(item.name);
+                var btns = $(document.createElement("div"));
+                var btn = $(document.createElement("button"));
+                btn.text("切换到该岗位");
+                var btn2 = $(document.createElement("button"));
+                btn2.text("退出/删除该岗位");
+                btn2.addClass("error");
+                btns.append(btn, btn2);
+                li.append(btns);
+                if(item.isOwning){
+                    var btn3 = $(document.createElement("button"));
+                    btn3.text("编辑岗位人员");
+                    btns.append(btn3);
+                    btn3.on("click", function(){
+                        window.location.href = ("/members.html?gid="+item.id);
+                    });
+                }
+                btn.on("click", function(e){
+                    /*
+                    $.post('/gangwei/', {id: item.id}, function(data){
+                        if(data){
+                            if(data.status === 200){
+                                window.location.reload();
+                            }else{
+                                alert("切换岗位失败：" + (data.msg || '未知错误'));
+                                undo();
+                            }
+                        }else{
+                            alert("切换岗位失败");
+                            console.error("岗位切换失败！\n请打开“网络”开发者标签，并刷新浏览器以查看错误信息");
+                            undo();
+                        }
+                    }, "json");
+                    */
+                    window.location.href = "/mobile.html?gid="+item.id;
+                });
+                btn2.on("click", function(){
+                    var msg = "";
+                    if(item.isOwning) msg = "确定要删除整个岗位吗？所有人将退出岗位。删除后聊天记录将无法查看，也不可重新找回。";
+                    else msg = "真的要退出岗位吗？";
+                    if(!confirm(msg)) return;
+                    $.post('/gangwei/out', {id: item.id}, function(data){
+                        if(data){
+                            if(data.status === 200){
+                                window.location.reload();
+                            }else{
+                                alert("退出岗位失败：" + (data.msg || '未知错误'));
+                                undo();
+                            }
+                        }else{
+                            alert("退出岗位失败");
+                            console.error("岗位退出失败！\n请打开“网络”开发者标签，并刷新浏览器以查看错误信息");
+                            undo();
+                        }
+                    }, "json");
+                });
+                ul.append(li);
+            });
+        });
+    </script>
+</body>
+</html>

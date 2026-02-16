@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/base.css'>
+    <style>
+      html{
+        background-image: linear-gradient(#66e3ff, #33c5ff, #2ebfef 70%, #009966 75%, #369819);
+      }
+      body::before{
+        content: "";
+        background-image: radial-gradient(circle at top right, #ff8f10 5%, #ffff00 10%, #ffff0044 20%, transparent 90%);
+      }
+      .animate{
+        background-color: #000000;
+        z-index: 1000;
+        color: #ffffff;
+        font-weight: bold;
+        text-align: center;
+        font-size: 60px;
+        line-height: 500px;
+      }
+      body::before, .container, .animate{
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+      }
+      body{
+        margin: 0;
+      }
+      .user, .sign{
+        width: 350px;
+        height: 60px;
+        line-height: 60px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        cursor: default;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      .user>*{
+        float: left;
+      }
+      .icon{
+        margin-right: 10px;
+        font-size: 20px;
+        line-height: normal;
+        margin-top: 20px;
+      }
+      .icon:hover{
+        color: #888888;
+      }
+      .avatar img{
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        outline: 1px solid #66ccff;
+      }
+      .sign span:hover{
+        text-decoration: underline;
+      }
+      .avatar:hover{
+        background-color: #00000011;
+      }
+      .avatar img, .avatar span{
+        vertical-align: middle;
+      }
+      .title{
+        font-size: 50px;
+        margin: 100px;
+        font-family: 'Comic Sans MS', '楷体', cursive;
+        font-weight: 700;
+      }
+      .gradient{
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+        background: #66ccff linear-gradient(#f0f8ff 0%, #66ccff 20%, #0088ff 40%, #00aaff 70%, #0033ff 90%, #000000 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        filter: drop-shadow(2px 2px 1px #00000088);
+      }
+      .applist{
+        display: block;
+        margin: 60px;
+      }
+      .applist>div{
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      .applist>div>div{
+        background-color: #ffffff66;
+        outline: 1px solid #cccccc;
+        color: #383838;
+        font-size: 200%;
+        height: 200px;
+        text-align: center;
+        line-height: 200px;
+        --space: 10px;
+        display: inline-block;
+        cursor: pointer;
+        border-radius: 10px;
+      }
+      .applist>div>div:only-child{
+        width: 100%;
+      }
+      .applist>div>div:not(:only-child){
+        width: calc(50% - var(--space)/2);
+      }
+      .applist>div>div:not(:only-child):first-child{
+        margin-right: var(--space);
+      }
+
+      .applist>div>div:hover{
+        box-shadow: 0 0 30px #ffff00;
+      }
+
+      .contact{
+        position: absolute;
+        top: 0;
+        right: 450px;
+        background-color: #ffffff55;
+        color: #6f6f86;
+        font-size: 36px;
+        border-radius: 0 0 15px 15px;
+        padding-left: 3px;
+        padding-right: 3px;
+        overflow: hidden;
+      }
+
+      .contact>*{
+        float: left;
+        cursor: pointer;
+        padding: 8px;
+      }
+
+      .contact>*:hover{
+        background-color: #00000022;
+        color: #aaaaaa;
+        text-decoration: none;
+      }
+
+      .msg{
+        position: fixed;
+        left: 50%;
+        top: 0;
+        transform: translate(-50%, 0);
+        color: #ffffff;
+        background-color: #00000022;
+        font-size: 40px;
+        padding: 1em;
+        opacity: 0;
+        border: 1px solid #00000030;
+        border-radius: 15px;
+      }
+
+      .msg button{
+        background-color: #ff8f10;
+        color: #ffffff;
+        cursor: pointer;
+        border: 1px solid #d1740b;
+        border-radius: 3px;
+        outline: none;
+        padding: 4px;
+        margin: 2px;
+      }
+
+      .tag{
+        display: inline-block;
+        font-weight: normal;
+        border-radius: 3px;
+        line-height: 20px;
+        padding-left: 5px;
+        padding-right: 5px;
+        color: #ffffff;
+        cursor: pointer;
+      }
+
+      .share{
+        cursor: pointer;
+        color: #ffffff88;
+        font-size: 50%;
+      }
+
+      .unread{
+        position: relative;
+      }
+      .unread::after{
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translate(50%, -50%);
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: #ff0000;
+      }
+      
+      @media all and (orientation: portrait) {
+        .applist>div>div{
+          display: block;
+          width: 100% !important;
+        }
+        body{
+          font-size: 20px;
+        }
+        .contact, .sign{
+          font-size: 60px;
+        }
+        .title{
+          font-size: 80px;
+        }
+      }
+      @media all and not (orientation: portrait) {
+        
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <% if (isLogin) { %>
+        <div class="user clearfix">
+          <span class="icon" data-href="/settings.html" title="用户设置">
+            <i class="fa-solid fa-gear"></i>
+          </span>
+          <span id="bell" class="icon <%= (unread ? "unread" : "") %>" title="系统消息">
+            <i class="fa-regular fa-bell"></i>
+          </span>
+          <div class="avatar" onclick="window.location.href='/user.html';">
+            <img src="<%= thumbnail %>" alt="<%= username %>" title="<%= username %>"/>
+            <span>
+              <%= username %>
+              <% if(nick) { %>
+                <b class="tag" style="background-color:<%= nickBg %>;" data-href="/viewArt?id=5" title="点击查看更多"><%- nick %></b>
+              <% } %>
+              <b class="tag" style="background-color: #ff0000;" data-href="/logout" title="退出登录">退出登录</b>
+            </span>
+          </div>
+        </div>
+      <% } else { %>
+        <div class="sign">
+          <span data-href="/register.html">注册</span>
+          <span data-href="/login.html">登录</span>
+        </div>
+      <% } %>
+      <div class="contact clearfix">
+        <i class="fa-solid fa-square-phone" title="电话" style="cursor: not-allowed;"></i>
+        <i class="fa-brands fa-git-alt" title="Gitee" data-href="https://gitee.com/fftt52536"></i>
+        <i class="fa-brands fa-qq" title="QQ号" data-text="123xxx789"></i>
+        <a class="fa-regular fa-envelope" title="邮箱" data-text="g9dsite@foxmail.com" href="mailto:g9dsite@foxmail.com"></a>
+      </div>
+      <div class="title">
+        <span class="gradient">G9D创意工作室</span>
+        <i class="fa-solid fa-share-from-square share" id="share"></i>
+      </div>
+      <div class="applist">
+        <% for( var index = 0; index < apps.length;) { %>
+          <div>
+            <% if(index === 0) { 
+            %><div data-href="<%= links[index] %>"><%= apps[index++] %></div><% } else { for(var i = 0; i < 2; i++){
+            %><div data-href="<%= links[index] %>"><%= apps[index++] %></div><% }} %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+    <div class="msg" id="msg"></div>
+    <script src="javascripts/jquery.js"></script>
+    <script>
+      $("#bell").on("click", function(e){
+        $("#bell").removeClass("unread");
+        window.location.href="/msgs.html";
+      });          
+
+      
+      function copy(text){
+        return new Promise(function(resolve, reject){
+          var textarea = document.createElement("textarea");
+          textarea.value = text;
+          textarea.style.position = "absolute";
+          textarea.style.opacity = "0";
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textarea);
+          resolve();
+        });
+      }
+
+      document.documentElement.addEventListener("click", function(e){
+        var tgt = e.target.closest("[data-href]");
+        if(!tgt) return;
+        else window.location.href = tgt.dataset.href;
+      });
+      window.addEventListener("click", function(e){
+        var r = e.target.closest('[data-copy]');
+        if(!r) return;
+        var text = r.dataset.copy;
+        copy(text)
+          .then(function() {
+            r.innerHTML = "复制成功";
+            delete r.dataset.copy;
+          })
+          .catch(function(err) {
+            alert("复制失败，请手动复制："+text);
+          });
+      });
+
+      window.addEventListener("click", function(e){
+        var r = e.target.closest('[data-text]');
+        if(!r) return;
+        r = r.dataset.text;
+        $("#msg").text(r);
+        var btn = $(document.createElement("button"));
+        btn.text("复制");
+        btn.attr("data-copy", r);
+        $("#msg").append(btn);
+        $("#msg").stop(true, true);
+        $("#msg").css({top: "-300px",opacity: '0'});
+        $("#msg").animate({top: "200px", opacity: '1'}, 500).animate({opacity: '0.3'}, 3000).animate({top: "-300px", opacity: '0'}, 1000);
+      });
+
+      document.getElementById("share").dataset.text = window.location.origin;
+
+      $("#animate").delay(1000).fadeOut(1000);
+    </script>
+    <script src="fa.js"></script>
+  </body>
+</html>

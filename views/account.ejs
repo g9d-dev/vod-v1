@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G9D-账户查询</title>
+    <style>
+        body{
+            margin: 0;
+            background-color: #002288;
+            color: #ffffff;
+        }
+        .logoNav{
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            background-color: hsla(208, 100%, 65%, 1);
+            height: 30px;
+            padding: 8px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .logo{
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            cursor: pointer;
+        }
+        ul li{
+            list-style: none;
+            display: inline-block;
+            width: 230px;
+            height: 200px;
+            text-align: center;
+            word-break: break-all;
+            word-wrap: break-word;
+            margin: 16px;
+            border-radius: 5px;
+            background-color: #bcb5ad;
+            padding-top: 20px;
+            overflow: hidden;
+            color: #ffffff;
+            cursor: pointer;
+            user-select: none;
+        }
+        ul li img{
+            width: 200px;
+            height: 130px;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+        .box{
+            color: #cccccc;
+            margin-top: 100px;
+        }
+        .box>*{
+            text-align: center;
+            margin: 0 auto;
+        }
+        h1{
+            font-size: 25px;
+        }
+        .logoNav a{
+            float: left;
+            color: #ffffff;
+            height: 30px;
+            line-height: 30px;
+            text-decoration: none;
+            padding-right: 7.5px;
+            padding-left: 7.5px;
+            vertical-align: middle;
+        }
+        .thumb{
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            border-radius: 10%;
+        }
+        ul li a{
+            color: inherit;
+            text-decoration: none;
+            text-shadow: #73706c 1px 1px 5px;
+        }
+        ul li a:hover{
+            text-decoration: underline;
+        }
+        .main{
+            margin-top: 30px;
+            border-top: 200px solid hsla(208, 100%, 65%, 1);
+            padding: 0 16px 16px 16px;
+        }
+        .avatar{
+            height: 150px;
+            position: relative;
+            top: -80px;
+            background-color: #2975de;
+            width: 400px;
+            border-radius: 6px;
+            padding: 10px;
+        }
+        .avatar img{
+            float: left;
+            width: 150px;
+            height: 150px;
+            background-color: #ffffff;
+            border-radius: 4px;
+        }
+        .avatar .name{
+            float: left;
+            margin-left: 5px;
+            color: #ffffff;
+            line-height: 150px;
+            font-size: 250%;
+            font-family: 'Comic Sans MS', 'Comic Sans', '楷体', SimKai, cursive;
+            font-weight: bold;
+        }
+        .more{
+            font-size: 200%;
+            background-image: url(/static/more.svg);
+            background-size: 100px 50px;
+            background-position: 50% 80%;
+            background-repeat: no-repeat;
+        }
+        .tag{
+            position: absolute;
+            right: 10px;
+            top: 70px;
+            line-height: 25px;
+            padding-left: 15px;
+            padding-right: 15px;
+            border: 1px solid #000000;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="logoNav">
+        <a href="/">
+            <img src="/static/logo.svg" alt="G9D首页" title="回到首页" class="logo"/>
+        </a>
+        <a href="/mobile.html">工作台</a>
+        <% if (isLogin) { %>
+            <a href="/user.html" style="float: right">
+                <%= username %>
+            </a>
+            <a href="/user.html" style="float: right;">
+                <img src="<%= thumbnail %>" alt="<%= username %>" title="<%= username %>" class="thumb"/>
+            </a>
+        <% } else { %>
+            <a href="/login.html?link=%2Faccount.html?id=<%= id %>" style="float: right">
+                登录
+            </a>
+            <a href="/register.html" style="float: right;">
+                加入G9D社区
+            </a>
+        <% } %>
+    </div>
+    <div class="main">
+        <div class="avatar">
+            <img src="<%= payload.icon %>" alt="User Avatar" draggable="false" />
+            <div class="name" style="color: <%= payload.nickBg %>"><%= payload.name %></div>
+            <% if(payload.nick) { %>
+              <div class="tag" style="background-color:<%= payload.nickBg %>;" data-href="/viewArt?id=5"><%- payload.nick %></div>
+            <% } %>
+        </div>
+        <div class="desc">啊哦，暂不支持简介<h1>&lt;预留接口&gt;</h1><p>开发者自行实现。</p></div>
+    </div>
+    <script>
+        document.documentElement.addEventListener("click", function(e){
+            var tgt = e.target.closest("[data-href]");
+            if(!tgt) return;
+            else window.location.href = tgt.dataset.href;
+        });
+    </script>
+</body>
+</html>

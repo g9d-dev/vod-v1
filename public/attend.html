@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加岗位</title>
+    <style>
+        body *{
+            text-align: center;
+            margin: 0 auto;
+        }
+        input:not([type="checkbox"]), button{
+            display: block;
+            width: 150px;
+            box-sizing: border-box;
+            padding: 3px;
+            border: 1px solid #ccc;
+            margin-bottom: 3px;
+            border-radius: 2px;
+        }
+        button{
+            background-color: #eee;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>添加/加入岗位</h1>
+    <input type="text" placeholder="岗位名" id="name"/>
+    <input type="text" placeholder="加入口令" id="pin"/>
+    <button type="button" id="go">加入</button>
+    <p>若岗位不存在，系统将自动添加一个新岗位</p>
+    <p>
+        <label for="agreement">
+            <input type="checkbox" checked id="agreement"/>
+            同意
+            <a href="/agreement.html" target="_blank">《用户协议及岗位政策》</a>
+        </label>
+    </p>
+    <script src="./javascripts/jquery.js"></script>
+    <script>
+        var n = $('#name'), pin = $('#pin'), go = $('#go'), agreement = $('#agreement');
+        go.on('click', function(){
+            if(!agreement.is(':checked')){
+                alert("必须先同意协议");
+            }else if(!n.val()) alert("必须填写岗位名");
+            else if(!pin.val()) alert("必须填写加入码"); 
+            else{
+                $.ajax({
+                    url: '/gangwei/new',
+                    type: 'post',
+                    data: {name: n.val(), joinword: pin.val()},
+                    dataType: "json",
+                    success: function(json){
+                        if(json.status === 200){
+                            alert(json.msg);
+                            if(window.location.hash === '#nojump') window.location.replace("/mobile.html");
+                            else window.close();
+                        }else if(json.status !== 500){
+                            alert(json.msg || '未知错误');
+                        }
+                    },
+                    error: function(){
+                        console.error('加入失败');
+                        alert('加入失败');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

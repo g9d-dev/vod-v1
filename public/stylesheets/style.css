@@ -1,0 +1,371 @@
+body {
+    padding: 50px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+    color: #008899;
+    text-decoration: inherit;
+    background: transparent;
+}
+
+a:hover{
+    text-decoration: underline;
+}
+
+.clearfix{
+    zoom: 1;
+}
+.clearfix::after{
+    display: block;
+    content: '';
+    clear: both;
+}
+
+.icon-back{
+    display: block;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    left: 10px;
+    top: 10px;
+    background-image: url(/stylesheets/images/icons-svg/carat-l-black.svg);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+.icon-more{
+    display: block;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    right: 20px;
+    top: 10px;
+    font-size: 20px;
+    color: #FFF;
+    cursor: pointer;
+}
+.m-no-svg .icon-back{
+    background-image: url(/stylesheets/images/icons-png/carat-l-black.png);
+}/*
+[data-role='footer']{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 80px;
+}*/
+.page{
+    width: auto;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    overflow: hidden;
+    padding-top: 45px;
+    padding-bottom: 45px;
+    min-width: 100px;
+    outline: 1px solid #000;
+}
+.page .main{
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    top: 45px;
+    bottom: 45px;
+    left: 0;
+    right: 0;
+}
+.header, .footer{
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: block;
+    background-color: #00B7FF;
+    height: 35px;
+}
+/*下面这行代码在Edge里完美的崩了
+@media screen and (orientation: portrait){
+    .page{
+        display: none;
+        left: 0;
+        right: 0;
+    }
+    .page:target{
+        display: block;
+    }
+}
+@media screen and (orientation: portrait){
+    .page#main{
+        left: 0;
+        width: 300px;
+    }
+    .page#communicate{
+        left: 300px;
+        right: 0;
+    }
+    .icon-back{
+        display: none;
+    }
+}
+*/
+.header{
+    color: #ffffff;
+    top: 0;
+    padding-top: 5px;
+    padding-bottom: 3px;
+}
+.footer{
+    bottom: 0;
+}
+.header h1, .header .title{
+    display: block;
+    font-size: 100%;
+    margin: 0 auto;
+    text-align: center;
+    height: 35px;
+    line-height: 35px;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    font-weight: bold;
+}
+.main{
+    padding: 30px;
+}
+input, textarea, audio, select, option{
+    display: block;
+    width: 100%;
+    height: 28px;
+    border: 1px solid #00000050;
+    box-sizing: border-box;
+}
+select{
+    cursor: pointer;
+    outline: none;
+}
+button{
+    height: 28px;
+    background-color: #79FFD2;
+    border: none;
+}
+ul, ol{
+    display: block;
+    border-radius: 6px;
+    padding: 0;
+    background-color: #0044ff15;
+}
+ul, ol, li{
+    border: 2px solid #CCCCCC;
+    border-collapse: collapse;
+}
+li{
+    list-style: none;
+    font-weight: bold;
+    transition: all 0.2s linear;
+}
+li:nth-child(even){
+    background-color: #00000006;
+}
+li a{
+    color: inherit;
+    display: block;
+    padding: 15px;
+    user-select: none;
+    cursor: pointer;
+    text-shadow: 1px 1px 0 #00000088;
+}
+li.highlight{
+    background-color: #8899ff;
+    box-shadow: 0 0 6px #0000ff;
+    border-color: #0000ff;
+}
+li:hover{
+    background-color: #FFFFFF60;
+    box-shadow: inset 0 0 20px #AAAAAA90;
+    color: #4488aa;
+}
+#gangwei{
+    position: relative;
+    height: 28px;
+}
+#gangwei select{
+    padding-left: 53px;
+}
+#gangwei::before{
+    content: "岗位：";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    line-height: 28px;
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color: #00000020;
+}
+#send{
+    position: absolute; 
+    left: 0; 
+    bottom: 6px;
+    /*right: 60px;*/
+    height: 28px; 
+    resize: none;
+    width: calc(100% - 60px);
+    border: 1px solid #CCCCCC;
+    outline: none;
+    font-family: 'Times New Roman', Times, SimSun, serif;
+}
+#send:focus{
+    height: 80px;
+    border: 3px solid #555555;
+}
+#send:disabled{
+    background-color: #888888cc;
+}
+#chat>p>span{
+    display: block;
+    float: left;
+    padding: 6px;
+}
+#chat>p.mine>span{
+    float: right;
+}
+/*
+#chat>p:not(.mine)>.chat-name::after{
+    content: ': ';
+    display: inline-block;
+    width: 1em;
+}
+#chat>p.mine>.chat-name::before{
+    content: ': ';
+    display: inline-block;
+    width: 1em;
+}
+*/
+#chat>p>.chat-name{
+    user-select: none;
+}
+#chat>p>.chat-msg{
+    border-radius: 4px;
+    color: #ffffff;
+    --color: #0066ff;
+    --icon: 8px;
+    background-color: var(--color);
+    position: relative;
+}
+#chat>p.mine>.chat-msg{
+    --color: #00e045;
+}
+#chat>p:not(.mine)>.chat-msg::before, #chat>p.mine>.chat-msg::after{
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border: calc(var(--icon)/2) solid transparent;
+    position: absolute;
+    top: 8px;
+}
+#chat>p:not(.mine)>.chat-msg::before{
+    border-right-color: var(--color);
+    left: calc(0px - var(--icon));
+}
+#chat>p.mine>.chat-msg::after{
+    border-left-color: var(--color);
+    right: calc(0px - var(--icon));
+}
+.unread::after{
+    content: "";
+    float: right;
+    margin: 3px;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    background-color: #ff0000;
+}
+
+.menu{
+    display: none;
+    position: fixed;
+    top: 28px;
+    right: 10px;
+    width: 200px;
+    border-radius: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-top: none;
+    overflow: hidden;
+}
+.menu li{
+    background-color: #eeeeee;
+    color: #000000;
+    border: none;
+}
+.menu li.brand{
+    background-color: #00ffff;
+    color: #ffffff;
+}
+.menu-active{
+    display: block;
+}
+.gap{
+    border-bottom: 1px solid #CCCCCC;
+}
+.apps .app{
+    display: inline-block;
+    vertical-align: top;
+    width: 40px;
+    height: 60px;
+    padding: 10px;
+    margin: 2px;
+    cursor: pointer;
+    border-radius: 6px;
+}
+.apps .app:hover{
+    background-color: #AAAAAA50;
+}
+.apps .app img{
+    display: block;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    user-select: none;
+    background-color: #ffffff;
+    border-radius: 5px;
+}
+.apps .app span{
+    display: block;
+    text-align: center;
+    color: #aaaaaa;
+    font-size: 10px;
+    padding-top: 5px;
+}
+
+.tag{
+    float: right;
+    padding: 5px;
+    margin: 10px;
+    color: #ffffff;
+    font-weight: normal;
+    font-size: 80%;
+    border: 3px solid #cccccc;
+    border-radius: 6px;
+    cursor: help;
+    user-select: none;
+}
+
+a.file{
+    display: block;
+    width: 300px;
+    background-color: #eaeaea;
+    color: #aaaaaa;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 10px 30px;
+}
+
+span.filename{
+    display: block;
+    font-size: 30px;
+    width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

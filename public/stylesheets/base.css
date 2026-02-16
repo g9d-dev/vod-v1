@@ -1,0 +1,52 @@
+/* Resets */
+html{
+    height: 100vh;
+    font-family: simsun, serif;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    overflow: auto;
+}
+html, body{
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+*{
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+i, b, em, strong{
+    font-style: inherit;
+    font-weight: inherit;
+}
+a{
+    text-decoration: inherit;
+    color: inherit;
+}
+a:hover{
+    text-decoration: underline;
+}
+input, textarea, button, select, select option{
+    font-size: inherit;
+    font-family: inherit;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+/* Public Styles */
+.fl{
+    float: left;
+}
+.fr{
+    float: right;
+}
+.clearfix{
+    zoom: 1;
+}
+.clearfix::after{
+    display: block;
+    content: '';
+    clear: both;
+}

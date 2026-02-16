@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        code{
+            display: inline-block;
+            padding: 5px;
+            margin: 1px;
+            border-radius: 2px;
+            background-color: #eeeecc;
+        }
+    </style>
+    <script>
+    MathJax = {
+        tex: {inlineMath: [['$', '$']]}
+    };
+    </script>
+    <script src="/javascripts/marked.min.js"></script>
+    <script id="MathJax-script" async src="/javascripts/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    <div id="md"></div>
+    <script>
+        async function getContent(id) {
+            var dm = await fetch(
+                "/cross?url=" +
+                encodeURIComponent("https://www.luogu.com.cn/problem/" + id)
+            ).then((s) => s.text());
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(dm, "text/html");
+            var scr = doc.getElementById("lentille-context");
+            var json = JSON.parse(scr.text);
+            return json?.data?.problem?.content;
+        }
+        var pid = prompt("输入题号（包含P/B/U/T等英文字符）");
+        getContent(pid).then((j)=>{
+            console.log(j);
+            var result = `# ${j.name}
+## 题目背景
+${j.background || ""}
+
+## 题目简介
+${j.description || ""}
+
+## 输入格式
+${j.formatI || ""}
+
+## 输出格式
+${j.formatO || ""}
+
+## 编程提示
+${j.hint || ""}
+            `;
+            document.getElementById("md").innerHTML = marked.parse(result); //解析markdown
+            MathJax.typeset();
+        });
+
+    </script>
+</body>
+
+</html>

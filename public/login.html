@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录G9D</title>
+    <link rel="stylesheet" href="./stylesheets/base.css">
+    <link rel="stylesheet" href="./stylesheets/style.css">
+    <style>
+        body{
+            padding: 0;
+            background-image: linear-gradient(#66e3ff, #33c5ff, #2ebfef 70%, #009966 75%, #369819);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+        body::before{
+            content: "";
+            background-image: radial-gradient(circle at top right, #ff8f10 5%, #ffff00 10%, #ffff0044 20%, transparent 90%);
+        }
+        body::before, .container{
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+        }
+        form{
+            width: 400px;
+            height: 500px;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ffffff;
+            font-size: 150%;
+        }
+        .title{
+            font-size: 2rem;
+        }
+        form>div{
+            margin: 40px;
+        }
+        form button{
+            cursor: pointer;
+            width: 100px;
+            height: 50px;
+            text-align: center;
+            line-height: 50px;
+            padding: 0;
+            margin: 0;
+        }
+        form input{
+            box-sizing: border-box;
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+    <form id="toAction">
+        <div class="form title">
+            <span>登录</span>
+        </div>
+        <div class="form">
+            <input name="username" type="text" placeholder="用户名" />
+        </div>
+        <div class="form">
+            <input name="password" type="password" placeholder="密码" />
+        </div>
+        <div class="clearfix">
+            <button type="button" id="submit" class="fl">登录</button>
+            <a class="fr" href="/register.html">去注册</a>
+        </div>
+    </form>
+    <script src="/javascripts/jquery.js"></script>
+    <script src="/javascripts/user.js"></script>
+    <script src="/javascripts/login.js"></script>
+</body>
+</html>

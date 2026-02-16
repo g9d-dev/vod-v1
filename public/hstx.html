@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT永动机：函数图像 生成器</title>
+    <style>
+        .wrap{
+            width: 400px;
+            height: 400px;
+            position: relative;
+        }
+        .tools{
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+        }
+        .tools button{
+            display: block;
+            width: 50px;
+            height: 50px;
+            text-indent: -999px;
+            overflow: hidden;
+            border-radius: 50%;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: 60% 60%;
+            background-color: #bbd6e1;
+            outline: none;
+            border: none;
+            margin: 10px;
+            cursor: pointer;
+        }
+        .tools button:hover{
+            background-color: #2f90ba;
+        }
+        .tools button:active{
+            background-color: #635282;
+        }
+        #scaleUp{
+            background-image: url(./static/hstx/zoom.png);
+        }
+        #scaleDown{
+            background-image: url(./static/hstx/zoom2.png);
+        }
+        #toZero{
+            background-image: url(./static/hstx/home.png);
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap" id="Hstx">
+        <div class="tools">
+            <button id="scaleUp" title="放大(快捷键:上)">放大</button>
+            <button id="scaleDown" title="缩小(快捷键:下)">缩小</button>
+            <button id="toZero" title="回零点(快捷键:A)">回零点</button>
+            <label><input type="checkbox" id="hot"/>快捷键</label>
+        </div>
+    </div>
+    <script>
+        function gm(n){
+            return document.getElementById(n);
+        }
+        var c = document.createElement('canvas'),
+            scaleUp = gm("scaleUp"),
+            scaleDown = gm("scaleDown"),
+            toZero = gm("toZero"),
+            hot = gm("hot"),
+            box = gm("Hstx") || document.body;
+        c.width = 400;
+        c.height = 400;
+        var ctx = c.getContext('2d');
+        box.append(c);
+        var xs = [-100, 500], ys = [-100, 500];
+        var thing = 'x';
+        var drawing = false;
+        function draw(){
+            return new Promise(function(resolve, reject){
+                if(drawing) {
+                    resolve();
+                    return;
+                }
+                drawing = true;
+                try{
+                    function drawFunc(thing, c, ctx, xmin, xmax, ymin, ymax, step){
+                        var x = xmin;
+                        var y = eval(thing);
+                        var w = c.width;
+                        var h = c.height;
+                        //ctx.beginPath();
+                        var began = false;
+                        var lastC = ctx.lineCap, lastJ = ctx.lineJoin;
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+                        for(x += step; x <= (xmax + step); x += step){
+                            y = eval(thing);
+                            //if(x > -2 && x < 2) debugger;
+                            if(!(x - xmin && h - y))console.log(x - xmin, h - y);
+                            var ax = (x - xmin) / (xmax - xmin) * w, ay = h - (y - ymin) / (ymax - ymin) * h;
+                            if(began){
+                                if(isNaN(ay)){
+                                    began = false;
+                                    ctx.stroke();
+                                }else if(ay < -100){
+                                    ctx.lineTo(ax, -100);
+                                }else if(ay > h + 100){
+                                    ctx.lineTo(ax, h + 100);
+                                }else{
+                                    ctx.lineTo(ax, ay);
+                                }
+                            }else if(!isNaN(ay)){
+                                began = true;
+                                ctx.beginPath();
+                                ctx.moveTo(ax, ay);
+                            }
+                        }
+                        if(began)
+                            ctx.stroke();
+                        ctx.lineCap = lastC;
+                        ctx.lineJoin = lastJ;
+                        var lastFill = ctx.fillStyle;
+                        ctx.fillStyle = '#000000';
+                        var cx = (0 - xmin) / (xmax - xmin) * w, cy = h - (0 - ymin) / (ymax - ymin) * h;
+                        ctx.beginPath();
+                        ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+                        ctx.fill();
+                        var lastStroke = ctx.strokeStyle;
+                        var lastLine = ctx.lineWidth;
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = '#000000';
+                        ctx.beginPath();
+                        ctx.moveTo(0, cy);
+                        ctx.lineTo(c.width, cy);
+                        ctx.moveTo(cx, 0);
+                        ctx.lineTo(cx, c.height);
+                        ctx.stroke();
+                        ctx.strokeStyle = lastStroke;
+                        ctx.lineWidth = lastLine;
+                        //var offsets = [0.1, 0.5, 1, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000];
+                        var offsets = [50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 1, 0.5];
+                        //var xOffset = 1000, yOffset = 1000;
+                        //while((xmax - xmin)/xOffset < 5 && xOffset >= 10) xOffset /= 10;
+                        //while((ymax - ymin)/yOffset < 5 && yOffset >= 10) yOffset /= 10;
+                        var xOffset = offsets.find(function(a){
+                            return (xmax - xmin) / a >= 5;
+                        }) || 0.5, yOffset = offsets.find(function(a){
+                            return (ymax - ymin) / a >= 5;
+                        }) || 0.5;
+                        var lastA = ctx.textAlign;
+                        var lastH = ctx.textBaseline;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'top';
+                        for(var axisX = Math.floor(xmin / xOffset) * xOffset; axisX < xmax; axisX += xOffset){
+                            if(axisX === 0) continue;
+                            var xx = (axisX - xmin) / (xmax - xmin) * w;
+                            var blockW = 3, blockH = 8;
+                            if(xx > 0 && xx < w) ctx.fillRect(xx - blockW / 2, cy - blockH / 2, blockW, blockH);
+                            ctx.fillText(axisX, xx, cy + blockH);
+                        }
+                        ctx.textAlign = 'end';
+                        ctx.textBaseline = 'middle';
+                        for(var axisY = Math.floor(ymin / yOffset) * yOffset; axisY < ymax; axisY += yOffset){
+                            var yy = h - (axisY - ymin) / (ymax - ymin) * h;
+                            var blockW = 8, blockH = 3;
+                            if(yy > 0 && yy < h) ctx.fillRect(cx - blockW / 2, yy - blockH / 2, blockW, blockH);
+                            ctx.fillText(axisY, cx - blockW, yy);
+                        }
+                        ctx.textAlign = lastA;
+                        ctx.textBaseline = lastH;
+                        ctx.fillStyle = lastFill;
+                    }
+                    ctx.clearRect(0, 0, c.width, c.height);
+                    ctx.fillRect(0, 0, c.width, c.height);
+                    drawFunc(thing, c, ctx, xs[0], xs[1], ys[0], ys[1], (xs[1] - xs[0]) / 5000);
+                    resolve();
+                }catch(e){
+                    reject(e);
+                    console.log(e);
+                }finally{
+                    drawing = false;
+                }
+            });
+        }
+        function size(n){ //放大至n倍
+            var xw = xs[1] - xs[0], xh = ys[1] - ys[0];
+            var cx = (xs[1] + xs[0]) / 2, cy = (ys[1] + ys[0]) / 2;
+            xw /= n * 2;
+            xh /= n * 2;
+            xs[0] = cx - xw;
+            xs[1] = cx + xw;
+            ys[0] = cy - xh;
+            ys[1] = cy + xh;
+            draw();
+        }
+        function home(){ //回零点
+            var xw = xs[1] - xs[0], xh = ys[1] - ys[0];
+            xw /= 2;
+            xh /= 2;
+            xs[0] = - xw;
+            xs[1] = xw;
+            ys[0] = - xh;
+            ys[1] = xh;
+            draw();
+        }
+        ctx.fillStyle = '#cccccc';
+        ctx.strokeStyle = '#66ccff';
+        ctx.lineWidth = 5;
+        thing = prompt('输入函数表达式\n(JavaScript代码)\nf(x)=');
+        //var thing = '50-Math.sqrt(2500-(x%100-50)**2)+40';
+        draw().then(function(){alert("done");}).catch(console.error);
+        var dragPos = [0, 0], dragging = false;
+        c.addEventListener('mousedown', function(e){
+            dragPos[0] = e.pageX;
+            dragPos[1] = e.pageY;
+            dragging = true;
+        });
+        window.addEventListener("mousemove", function(e){
+            if(!dragging) return;
+            var xOffset = e.pageX - dragPos[0];
+            var yOffset = dragPos[1] - e.pageY;
+            dragPos[0] = e.pageX;
+            dragPos[1] = e.pageY;
+            xOffset /= c.width;
+            yOffset /= c.height;
+            xOffset *= xs[1] - xs[0];
+            yOffset *= ys[1] - ys[0];
+            xs[0]-=xOffset;
+            xs[1]-=xOffset;
+            ys[0]-=yOffset;
+            ys[1]-=yOffset;
+            draw();
+        });
+        window.addEventListener("mouseup", function(e){
+            dragging = false;
+        });
+        window.addEventListener("keyup", function(e){
+            if(hot.checked){
+                console.log(e);
+                var code = e.code;
+                switch(code){
+                    case 'ArrowUp':
+                        size(2);
+                        break;
+                    case 'ArrowDown':
+                        size(1 / 2);
+                        break;
+                    case 'KeyA':
+                        home();
+                        break;
+                }
+            }
+        });
+        scaleUp.addEventListener("click", function(){
+            size(2);
+        });
+        scaleDown.addEventListener("click", function(){
+            size(1 / 2);
+        });
+        toZero.addEventListener("click", function(){
+            home();
+        });
+    </script>
+</body>
+</html>

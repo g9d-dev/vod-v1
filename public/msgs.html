@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统消息</title>
+    <style>
+        html{
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        body{
+            margin: 0;
+            position: relative;
+            min-height: 100%;
+            background-color: #0000ff;
+            background-image: linear-gradient(#ffffff 0%, #0000ff, 30%, #8899ff 50%, #aabbff 70%, #bbbbff 80%, #666699 90%, #000000 100%);
+            background-image: -moz-linear-gradient(#ffffff 0%, #0000ff, 30%, #8899ff 50%, #aabbff 70%, #bbbbff 80%, #666699 90%, #000000 100%);
+        }
+        .box{
+            width: 580px;
+            height: 630px;
+            background-color: #ffffff;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .title{
+            margin: 0 auto;
+            text-align: center;
+            font-size: 60px;
+        }
+        #wrap p{
+            display: block;
+            margin: 1em;
+            font-size: 14px;
+            color: #ccc;
+        }
+        #wrap p a{
+            display: inline-block;
+            padding: 6px;
+            background-color: #ff8800;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 3px;
+            margin: 4px;
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            cursor: pointer;
+        }
+    </style>
+    <script src="./javascripts/jquery.js"></script>
+</head>
+<body>
+    <div class="box">
+        <div class="title">系统消息</div>
+        <div id="wrap"></div>
+    </div>
+    <script>
+        function to(url){
+            fetch(url).then(function(response){
+                return response.json();
+            }).then(function(json){
+                if(json.status !== 200){
+                    console.error(json);
+                    alert("添加失败");
+                }else{
+                    window.close();
+                    window.location.href = 'about:blank';
+                }
+            }).catch(console.error); 
+        }
+        $.getJSON("/users/msgs", function(data){
+            var a = Array.from(data);
+            if(data.status !== 200) console.error(data);
+            var d = Array.from(data.data);
+            var wrap = $("#wrap");
+            d.forEach(function(el){
+                var s = $(document.createElement("p"));
+                s.text(el.msg);
+                if(el.type === 1){
+                    if(typeof el.appendix === 'string')
+                        s.append('<a onclick="to(\'/gangwei/addUser?uid='+el.appendix.split(',')[0]+'&gid='+el.appendix.split(',')[1]+'\');">同意</a>');
+                }
+                wrap.append(s);
+            });
+            if(d.length > 0) wrap.children(":last-child")[0].scrollIntoView();
+            $.getJSON("/users/readmsg");
+            //TODO
+        });
+    </script>
+</body>
+</html>

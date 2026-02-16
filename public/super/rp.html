@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员：举报列表</title>
+    <script src="/javascripts/jquery.js"></script>
+    <style>
+        #tb{
+            width: 1000px;
+            line-height: 1.5em;
+        }
+        #tb, #tb tr, #tb td, #tb th{
+            border: 1px solid #cccccc;
+            border-collapse: collapse;
+        }
+        #tb td, #tb th{
+            padding: 16px;
+        }
+        #tb a{
+            text-decoration: none;
+            color: inherit;
+            display: inline-block;
+            padding: 5px;
+            border-radius: 3px;
+            background-color: #fa7e24;
+            color: #ffffff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <table id="tb">
+        <tr>
+            <th>举报ID</th>
+            <th>举报者 用户ID</th>
+            <th>举报的项目ID</th>
+            <th>举报原因</th>
+            <th>举报时间</th>
+            <th>操作</th>
+        </tr>
+    </table>
+    <script>
+        $.getJSON("/admin/reports", function(dt){
+            if(dt.status !== 200) return alert(dt.msg);
+            var tb = $("#tb"), dd = dt.data;
+            for(var i = 0; i < dd.length; i++){
+                var tr = $(document.createElement("tr")), d = dd[i];
+                var k = [
+                    d.id,
+                    d.uid,
+                    d.pid,
+                    d.reason,
+                    new Date(d.dt).toString()
+                ];
+                tr.append(k.map(function(txt){
+                    var elm = $(document.createElement("td"));
+                    elm.text(txt);
+                    return elm;
+                }));
+                var elem = $(document.createElement("td"));
+                elem.html(
+                    "<a target='top' href='/player.html?id="+d.pid+
+                    "'>查看</a>"+
+                    ""
+                );
+                tr.append(elem);
+                tb.append(tr);
+            }
+            var tr = $(document.createElement("tr"));
+            tr.html("<td colspan='6'>没有更多了</td>");
+            tb.append(tr); 
+        });
+    </script>
+</body>
+</html>

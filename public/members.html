@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>岗位成员编辑</title>
+    <style>
+        h2{
+            margin: 0 auto;
+            text-align: center;
+            padding: 0;
+            font-size: 5vw;
+            font-weight: normal;
+            font-style: normal;
+            margin-bottom: 30px;
+            margin-top: 60px;
+        }
+        ul, li{
+            list-style: none;
+        }
+        ul{
+            width: 38vw;
+            margin: 0 auto;
+        }
+        li{
+            height: auto;
+            padding: 8px;
+            border-radius: 6px;
+            background-color: #ff8800;
+            cursor: pointer;
+            color: #ffffff;
+        }
+        li>div{
+            float: right;
+        }
+        li>div>button{
+            display: inline-block;
+            padding: 3px;
+            border-radius: 2px;
+            background-color: #ffcc00;
+            border: 0;
+            outline: none;
+            color: #00ccff;
+            margin-left: 6px;
+            cursor: pointer;
+            margin-top: 3px;
+        }
+        li>div>button:hover{
+            color: #888888;
+            background-color: #ffff33;
+        }
+        li::after{
+            content: "";
+            display: block;
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+    <h2>成员编辑-<span id="gname"></span></h2>
+    <ul id="users"></ul>
+    <script src="./javascripts/jquery.js"></script>
+    <script>
+        var gid = new URL(window.location.href), ul = $("#users");
+        gid = gid.searchParams.get("gid");
+        if(!gid) window.location.replace("/manage.html");
+        $.getJSON("/gangwei/name?id="+gid, function(data){
+            if(!data) return;
+            if(data.status === 200) $("#gname").text(data.msg);
+            else if(data.status !== 500) alert(data.msg);
+        });
+        $.getJSON("/gangwei/isOwner?id="+gid, function(data1){
+            if(!data1) return;
+            if(data1.status !== 500 && data1.status !== 200) alert(data1.msg);
+            else if(data1.status === 200) {
+                $.getJSON("/users/?gid="+gid, function(data){
+                    if(!data) return;
+                    var dt = Array.from(data);
+                    dt.forEach(function(user){
+                        var li = $(document.createElement("li"));
+                        li.text(user[0]);
+                        if(String(data1.msg) === 'true'){
+                            var btns = $(document.createElement("div"));
+                            var btn = $(document.createElement("button"));
+                            btn.text("转让管理员权限");
+                            var btn2 = $(document.createElement("button"));
+                            btn2.text("删除此成员");
+                            btn2.addClass("error");
+                            btns.append(btn, btn2);
+                            li.append(btns);
+                            btn.on("click", function(){
+                                $.getJSON("/gangwei/changeOwner?newid="+user[1]+"&gid="+gid, function(r){
+                                    if(r.status === 200){
+                                        alert("转让成功！");
+                                    }else{
+                                        alert("转让失败");
+                                        console.error(r);
+                                    }
+                                });
+                            });
+                            btn2.on("click", function(){
+                                if(confirm("真的要删除用户"+user[0]+"吗？")){
+                                    $.getJSON("/gangwei/rm?uid="+user[1]+"&gid="+gid, function(r){
+                                        if(r.status === 200){
+                                            alert("删除成功！");
+                                            window.location.reload();
+                                        }else{
+                                            alert("删除失败");
+                                            console.error(r);
+                                        }
+
+                                    });
+                                }
+                            });
+                        }
+                        ul.append(li);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

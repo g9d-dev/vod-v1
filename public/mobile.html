@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOD</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <script src="/javascripts/jquery.js"></script>
+    <script src="/javascripts/svg.js"></script>
+    <style>
+        html, body{
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .animate{
+            background-color: #000000;
+            z-index: 1000;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+            font-size: 60px;
+            line-height: 200px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+        }
+        .icon {
+            width: 1em;
+            height: 1em;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            color: transparent;
+            cursor: pointer;
+        }
+
+        .icon-home {
+            background-image: url(/static/icon-home.svg);
+        }
+
+        .icon-home:hover {
+            background-image: url(/static/icon-home-active.svg);
+        }
+
+        .footer .icon{
+            position: absolute;
+            right: 60px;
+            top: 0;
+            z-index: 1000;
+            color: #000000;
+            margin: 6px;
+        }
+    </style>
+    <style id="portrait">
+        .page{
+            display: none;
+            left: 0;
+            right: 0;
+        }
+        .page:target{
+            display: block;
+        }
+    </style>
+    <style id="landscape">
+        .page#main{
+            left: 0;
+            width: 300px;
+        }
+        .page#communicate{
+            left: 300px;
+            right: 0;
+        }
+        .icon-back{
+            display: none;
+        }
+    </style>
+    <style id="tNormal"></style>
+    <style id="tCat">
+        body{
+            background-color: #ffffaa;
+        }
+        #chat>p>.chat-msg, #chat>p.mine>.chat-msg{
+            --color: #ffaa00;
+            padding: 13px;
+        }
+        #chat>p:not(.mine)>.chat-msg::after, #chat>p.mine>.chat-msg::before{
+            content: "";
+            display: block;
+            width: 30px;
+            height: 30px;
+            background-image: url(/static/cat.png);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            position: absolute;
+            top: 0;
+            transform: translateY(-50%);
+        }
+        #chat>p:not(.mine)>.chat-msg::after{
+            right: -5px;
+        }
+        #chat>p.mine>.chat-msg::before{
+            left: -5px;
+        }
+    </style>
+    <style id="tNight">
+        .icon{
+            background-color: #ffffff33;
+        }
+        body{
+            background-color: #000033;
+            color: #ffffff;
+        }
+        #chat>p>.chat-msg{
+            --color: #666666;
+        }
+        #chat>p.mine>.chat-msg{
+            --color: #000088;
+        }
+        .header, .footer{
+            background-color: #000066;
+        }
+        .menu li{
+            background-color: #eeeeee66;
+            color: #ffffff;
+        }
+        .menu li.brand{
+            background-color: #00ffff66;
+        }
+    </style>
+    <script src="/fa.js"></script>
+</head>
+
+<body>
+
+    <div class="page" id="main">
+        <div class="header">
+            <span class="title">VOD私箱 1.4.0</span>
+        </div>
+        <div class="main">
+            <p style="opacity: 0.5">本页面由G9D <a href="javascript:null" data-href="/account.html?id=3" data-jump="new">Erhu</a>开发</p>
+            <h2><span class="icon icon-home" id="home">[主页]</span>聊天<a id="head" href="javascript:void(0)" data-href="/user.html" data-jump="new"></a></h2>
+            <div id="gangwei">
+                <select id="gselect" autofocus>
+                    <option value="">加载中......</option>
+                </select>
+            </div>
+            <ul>
+                <li class="highlight"><a id="msgs" title="验证消息">验证消息 & 系统消息</a></li>
+            </ul>
+            <p>用户列表：</p>
+            <ul>
+                <li style="cursor: pointer" data-uid="null"><a id="public" href="#communicate">公共聊天</a></li>
+            </ul>
+            <ul id="users">
+                <li id="load">正在加载...</li>
+            </ul>
+            <div class="gap"></div>
+            <p>我的小程序</p>
+            <div class="apps">
+                <div class="app" data-jump="new" data-href="/code-toys/"><img src="/static/dialog.svg"/><span>Code Toys</span></div>
+                <div class="app" data-jump="new" data-href="hstx.html"><img src="/static/hstx/home.png"/><span>函数图像</span></div>
+            </div>
+        </div>
+        <div class="footer">
+            <button onclick='setTheme("normal")'>白色主题</button>
+            <button onclick='setTheme("cat")'>猫猫模式</button>
+            <button onclick='setTheme("night")'>夜间主题</button>
+        </div>
+    </div>
+
+    <div class="page" id="communicate">
+        <div class="header">
+            <a id="apps" class="icon-more">
+                <i class="fa-solid fa-ellipsis"></i>
+            </a>
+            <a href="#main" id="back" class="icon-back"></a>
+            <span id="username" class="title"></span>
+        </div>
+        <div class="main" id="chat">
+            <span>
+                尊敬的用户，欢迎使用VOD！
+            </span>
+        </div>
+        <ul class="menu" id="actions">
+            <li id="menu_that" style="display: none;">
+                <a id="menu_that_a" data-jump="new">
+                    查看该用户信息
+                </a>
+            </li>
+            <li>
+                <a data-href="/user.html" data-jump="new">
+                    我自己的主页
+                </a>
+            </li>
+            <li class="brand">
+                <a data-href="/hstx.html" data-jump="new">
+                    函数图像生成器
+                </a>
+            </li>
+        </ul>
+        <div class="footer">
+                
+            <span class="icon" id="filetrans" title="文件快传">
+                <i class="fa-solid fa-file-export"></i>
+            </span>
+            <textarea value="" id="send" autocomplete="off" disabled></textarea>
+            <button style="width: 60px; position: absolute; right: 0; top: 0;" id="go">发送</button>
+        </div>
+    </div>
+    <div class="animate" id="animate">Loading.<br/>正在进入VOD</div>
+    <input type="file" id="filer" style="display: none;"/>
+
+    <script>
+        var audio = new Audio("/Connect.mp3");
+        var users = $('#users');
+        var chat = $('#chat');
+        var sel = $('#gselect');
+        var msgs = $('#msgs');
+        var pub = $('#public');
+        var home = $('#home');
+        var more = $('#apps');
+        var filer = $('#filer');
+        var filetrans = $('#filetrans');
+        filetrans.hide();
+        function openfile(){
+            filer.click();
+        }
+        var themes = {
+            normal: $("style#tNormal"),
+            cat: $("style#tCat"),
+            night: $("style#tNight")
+        };
+        function trim(str){
+            if(!str) return '';
+            var r = String(str);
+            return r.replace(/^\s*/, "").replace(/\s*$/, "");
+        }
+
+
+
+
+
+        var noticeId = 0;
+        var showing = false, nt = '';
+        function notice(msg, time) {//提示音&设置标题
+            if (window.parent && window.parent.fuiNotice) window.parent.fuiNotice(msg);
+            noticeId++;
+            var i = noticeId;
+            var e = $("title");
+            if (!e) return;
+            var ct = e.html();
+            if (showing) ct = nt;
+            else {
+                showing = true;
+                nt = ct;
+                e.html(msg);
+            }
+            setTimeout(function () {
+                if (i === noticeId && e.html() === msg) {
+                    e.html(ct);
+                    showing = false;
+                }
+            }, time);
+        }
+        var se = new URL(window.location.href).searchParams;
+        se = se.get.bind(se);
+        var gid = 'gid=' + se('gid');
+        if (!se('gid')) {
+            $.ajax({
+                async: false,
+                url: '/gangwei/',
+                type: 'get',
+                success: function (data) {
+                    if (data && data[0] && data[0].id) {
+                        window.location.search = '?gid=' + data[0].id;
+                    }
+                }
+            });
+        }
+        
+
+
+        var setTheme = (function(){
+            var themesKeys = Object.keys(themes);
+            themesKeys.forEach(function(e){
+                themes[e].prop("disabled", true);
+            });
+            return function(theme){
+                themesKeys.forEach(function(e){
+                    if(e === theme)
+                        themes[e].prop("disabled", false);
+                    else
+                        themes[e].prop("disabled", true);
+                });
+            }
+        })();
+        setTheme("normal");
+
+
+
+        var currentUser = null, cname = null, myname = null, myid = null;
+        var sse = null;
+        var oldValue = null;
+        var uid = window.localStorage.getItem("uid") + 1;
+        
+        function setRead(id){//设置已读的公共聊天ID（用于解决公共聊天的bug）
+            window.localStorage[myid+"chat"+se("gid")] = id;
+        }
+        function getIsRead(id){
+            if(id){
+                if(String(window.localStorage[myid+"chat"+se("gid")]) === String(id)){
+                    return true;
+                }
+            }else{
+                return true;
+            }
+
+            return false;
+        }
+        msgs.on("click", function () {
+            msgs.removeClass("unread");
+            window.location.href = "/msgs.html";
+        });
+        home.on("click", function () {
+            window.location.href = '/';
+        });
+        more.on("click", function(){
+
+            //自定义任务栏
+            var that = $("#menu_that"), that_a = $("#menu_that_a");
+            if(currentUser){
+                that_a.attr("data-href", "/account.html?id="+currentUser);
+                that.show();
+            }else{
+                that.hide();
+            }
+
+            
+            $("#actions").show(500);
+        });
+        $(window).on("click", function(e){
+            var el = $(e.target);
+            if((!el.closest("#actions")[0])&&(!el.closest("#apps")[0])){
+                var lst = $("#actions");
+                if(lst.is(":visible")){
+                    lst.hide(500);
+                }
+            }
+        });
+        $.getJSON("/users/msgs", function (data) {
+            var a = Array.from(data);
+            if (data.status !== 200) console.error(data);
+            var d = Array.from(data.data);
+            if (d && d.length > 0 && d[0] && String(d[0].read) === '0') msgs.addClass("unread");
+        });
+        if (window.location.hash === '#communicate') { window.location.hash = '#main'; }
+        function hashTest() {
+            if (window.location.hash.length <= 1) {
+                window.location.hash = '#main';
+            }
+            if (cname && window.location.hash === "#communicate") {
+                $("title").text(cname);
+            } else {
+                $("title").text("欢迎来到VOD聊天社交平台！");
+            }
+        }
+        hashTest();
+
+        function changePage(val) {
+            window.location.href = val;
+        }
+        window.addEventListener("hashchange", function () {
+            hashTest();
+        });
+        function toTop(id) {
+            var u = $('[data-uid="' + id + '"]');
+            if (!u.is("li")) return;
+            var p = u.parent();
+            if (!p.is("ul")) return;
+            p.prepend(u);
+        }
+        function addTag(c, tag, color){
+            var tg = $(document.createElement("span"));
+            tg.addClass("tag");
+            tg.css("background-color", color);
+            tg.text(tag);
+            tg.attr("data-href", "/viewArt?id=5");
+            c.append(tg);
+        }
+        function s(id, name) {
+            $('#send').removeAttr('disabled');
+            filetrans.show(200);
+            if (sse) sse.close();
+            sse = null;
+            currentUser = id;
+            cname = name;
+            $('#username').text(cname);
+            $("title").text(cname); //For the PC Users
+
+            $.getJSON('/users/data?' + gid + '&id=' + currentUser, function (data) {
+                if (currentUser === id) {
+                    sse = new EventSource('/users/sse?' + gid);
+                    bindEvent();
+                    chat.empty();
+                    var last = null, lastar = null;
+                    Array.from(data).forEach(function (message) {
+                        if (!(message && message.length)) return;
+                        var msg = $(document.createElement('span')), p = $(document.createElement("p")), name = $(document.createElement("span"));
+                        msg.html(message[1] || '');
+                        name.html(message[0] || '未知用户');
+                        msg.addClass("chat-msg");
+                        name.addClass("chat-name");
+                        p.append(name, msg);
+                        p.addClass('clearfix');
+                        if (message[0] === myname && myname) p.addClass('mine');
+                        chat.append(p);
+                        last = msg;
+                        lastar = message;
+                    });
+                    //debugger;
+                    if (last) {
+                        last[0].scrollIntoView();
+                    }
+                    if(lastar){
+                        if(!id){
+                            setRead(lastar[2]);
+                        }
+                    }
+                    $("[data-uid='" + (currentUser || null) + "'] a").removeClass("unread");
+                }
+            });
+
+        }
+        function bindEvent() {
+            sse.addEventListener('msg', function (e) {  //接收SSE实时消息
+                var dt = e.data;
+                console.log(dt);
+                var l = dt.match(/^From\s(\d+)\sTo\s(\d+)\s(\d+)\:(.*)$/s);
+                if (!l) return;
+                var from = l[1], to = l[2], cur = String(currentUser || 0);
+                toTop((to === myid ? from : to));
+                if ((from === cur && to === myid) || (from === myid && to === cur) || (to === '0' && cur === '0')) {
+                    //var msg = $(document.createElement('p'));
+                    //msg.html(((from === cur)?cname:myname)+': '+l[3]);
+                    //chat.append(msg);
+                    var lns = l[4].split("\n");
+                    var top = lns.shift(), rest = lns.join("\n");
+                    var msg = $(document.createElement('span')), p = $(document.createElement("p")), name = $(document.createElement("span"));
+                    msg.html((cur === '0' ? rest : l[4]) || '');
+                    name.html((from === String(myid)) ? myname : (cur === '0' ? top : cname));
+                    msg.addClass("chat-msg");
+                    name.addClass("chat-name");
+                    p.append(name, msg);
+                    p.addClass('clearfix');
+                    if (from === myid && myid) p.addClass('mine');
+                    chat.append(p);
+                    if(to === '0') setRead(l[3]);
+                } else {
+                    var id;
+                    if (from === myid) id = to;
+                    else id = from;
+                    if (to === '0') id = null;
+                    $('[data-uid="' + id + '"] a').addClass("unread");
+                }
+            });
+        }
+        var socket = new EventSource('/users/global?' + gid);
+        socket.addEventListener("msg", function (e) {        //只接收SSE广播，但不获取具体信息。用于将未点击用户设置为红点并提示。
+            var dt = e.data;
+            console.log(dt);
+            var l = dt.match(/^From\s(\d+)\sTo\s(\d+)$/s);
+            if (!l) return;
+            var from = l[1], to = l[2], cur = String(currentUser);
+            if (from !== myid && to !== myid && to !== '0') {
+                return;
+            }
+            if (document.visibilityState !== "visible") {
+                notice("有新消息", 4000);
+            }
+            try {
+                audio.play();
+            } catch (e) {
+                null;
+            }
+            if ((String(from) === String(cur) || String(to) === String(cur) || (to === '0' && (cur === '0' || !cur))) && window.location.hash === "#communicate") return;
+            toTop((from === myid ? to : from));
+            var id;
+            if (from === myid) id = to;
+            else id = from;
+            if (to === '0') id = null;
+            $('[data-uid="' + id + '"] a').addClass("unread");
+        })
+        function setUser(id, name) {//用户切换了聊天对象
+            if (myname && myid) return s(id, name);
+            $.get('/users/my?' + gid, function (d) {
+                myname = d.name;
+                myid = String(d.id);
+                s(id, name);
+            });
+        }
+        function send(e) {//发送消息
+            //if(!currentUser) return;
+            var data = $('#send').val();
+            if (!data) return;
+            if(trim(data) === "") return;
+            $('#send').val('');
+            $.ajax({
+                url: '/users/msg?' + gid,
+                type: 'post',
+                data: { to: currentUser, message: data },
+                dataType: "json",
+                success: function (json) {
+                    if (!json) console.error("服务器错误：返回类型异常");
+                    if (json.status === 200)
+                        console.log("发送了1条消息");
+                    else if (json.status === 500)
+                        alert("服务器错误，发送失败");
+                    else if (json.status)
+                        alert(json.msg || '发送失败');
+                    else {
+                        alert("发送失败：服务器JSON格式不正确！");
+                    }
+                    setUser(currentUser, cname);
+                    toTop(currentUser);
+                },
+                error: function () {
+                    console.error('发送失败');
+                    alert('发送失败');
+                }
+            });
+        }
+        $('#go').on('click', send);
+        function undo() {
+            if (oldValue) sel.val(oldValue);
+            else {
+                var child = sel.children()[0];
+                sel.val(child ? child.attr('value') : sel.val());
+            }
+        }
+        sel.on("change", function (e) {//切换岗位
+            var value = sel.val();
+            if (value === 'new') {
+                undo();
+                window.location.href=('./attend.html');
+            } else if (value === 'manage') {
+                undo();
+                window.location.href=("./manage.html");
+            }
+            else if (value) {
+                console.log(value);
+                //TODO: 发送切换岗位消息至服务器
+                /*
+                $.post('/gangwei/', {id: value}, function(data){
+                    if(data){
+                        if(data.status === 200){
+                            window.location.reload();
+                        }else{
+                            alert("切换岗位失败：" + (data.msg || '未知错误'));
+                            undo();
+                        }
+                    }else{
+                        alert("切换岗位失败");
+                        console.error("岗位切换失败！\n请打开“网络”开发者标签，并刷新浏览器以查看错误信息");
+                        undo();
+                    }
+                }, "json");
+                */
+                window.location.search = '?gid=' + value;
+            }
+        });
+        $.ajax({
+            url: '/users/?' + gid,
+            type: 'get',
+            success: function (res) {//获取用户
+                Array.from(res).forEach(function (data) {//创建用户列表 
+                    //data: [名称, ID, 是否未读, 用户牌子颜色, 用户牌子]
+                    var item = $(document.createElement('li'));
+                    var link = $(document.createElement('a'));
+                    link.text(data[0]);
+                    link.attr('href', '#communicate');
+                    link.attr('title', data[0]);
+                    item.attr('data-uid', data[1]);
+                    if (String(data[2]) === '1') link.attr('class', 'unread');
+                    if(data[4]) link.css("color", data[4]);
+                    if(data[5]) addTag(item, data[5], data[4]);
+                    link.on('click', function () {
+                        setUser(data[1], data[0]);
+                    });
+                    item.append(link);
+                    users.append(item);
+                });
+                pub.on("click", function () {
+                    setUser('', '公共聊天');
+                });
+                $('#load').remove();
+
+                $.get('/users/my?' + gid, function (d) {//获取个人信息及岗位列表
+                    myname = d.name;
+                    myid = String(d.id);
+                    if (d.id < 0) window.location.replace('/login.html?link=%2Fmobile.html');
+                    else {
+                        $('#head').text('-' + myname);
+                        $.ajax({
+                            url: '/gangwei/?' + gid,
+                            type: 'get',
+                            success: function (res) {
+                                sel.empty();
+                                if (Array.from(res).length <= 0) window.location.replace("/attend.html#nojump");
+                                Array.from(res).forEach(function (val) {
+                                    var option = $(document.createElement("option"));
+                                    option.attr('value', val.id);
+                                    option.text(val.name);
+                                    if (val.isCurrent) {
+                                        option.attr('selected', 'selected');
+                                        oldValue = val.id;
+                                    }
+                                    sel.append(option);
+                                });
+                                var option = $(document.createElement("option"));
+                                option.attr('value', 'new');
+                                option.text("新建/加入岗位...");
+                                sel.append(option);
+                                var option2 = $(document.createElement("option"));
+                                option2.attr('value', 'manage');
+                                option2.text("管理岗位...");
+                                sel.append(option2);
+                                sel.focus();
+                                $.getJSON("/users/data?"+gid, function(dt){
+                                    var lst = Array.from(dt);
+                                    lst = lst[lst.length - 1];
+                                    if(lst && lst[2]){
+                                        if(!getIsRead(lst[2])){
+                                            $("[data-uid='null'] a").addClass("unread");
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+
+        //文件快传
+        filetrans.on("click", function(){
+            openfile();
+        });
+        filer.on("change", function(){
+            var fl = filer.prop("files");
+            if(!fl) return;
+            if(!fl[0]) return;
+            var file = fl[0];
+            var dt = new FormData();
+            dt.append("file", file);
+            dt.append("to", currentUser);
+            fetch("/users/file?"+gid, {method: "post", body: dt}).then(s=>s.json()).then(function(json){
+                if(json.status === 200){
+                    var y = json.code;
+                    //alert(y);
+                    //TODO: Send Card To The User
+                    setUser(currentUser, cname);
+                    toTop(currentUser);//刷新聊天
+                }else{
+                    alert("文件传输失败，可能是文件过大");
+                    console.error(json);
+                }
+            });
+        });
+
+
+        $(document.body).on("click", "a.file", function(e){
+            var c = e.target.closest("a.file");
+            if(!c) return;
+            e.preventDefault();
+            var el = $(c);
+            var h = el.attr("href");
+            window.open(h);
+        });
+        
+        var portrait = document.getElementById("portrait");
+        var landscape = document.getElementById("landscape");
+        function hresize(){
+            var w = window.innerWidth, h = window.innerHeight;
+            portrait.disabled = !(h > w);
+            landscape.disabled = (h > w);
+        }
+        hresize();
+        window.addEventListener("resize", hresize);
+        window.addEventListener("DOMContentLoaded", function(){
+            $("#animate").delay(500).fadeOut(500);
+        });
+    </script>
+    <script>
+        document.documentElement.addEventListener("click", function(e){
+            var tgt = e.target.closest("[data-href]");
+            if(!tgt) return;
+            else window.location.href = tgt.dataset.href;
+        });
+    </script>
+</body>
+
+</html>
